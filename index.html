@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html manifest="shoppinglist.manifest">
+<head>
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+    <meta content="minimum-scale=1.0, width=device-width, maximum-scale=0.6667, user-scalable=no" name="viewport" />
+    <link href="css/developer-style.css" rel="stylesheet" media="screen" type="text/css" />
+    <link href="css/custom.css" rel="stylesheet" media="screen" type="text/css" />
+    
+    <link rel="apple-touch-icon" href="images/icons/application-icon.png" />
+    <link rel="apple-touch-startup-image" href="images/icons/application-startup-image.png" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    
+    <script src="javascript/json2.js" type="text/javascript"></script>
+    <script src="javascript/jquery.min.js" type="text/javascript"></script>
+    <script src="javascript/swfaddress.js" type="text/javascript"></script>
+    <script src="javascript/application.js" type="text/javascript"></script>
+    <title>Shopping list</title>
+    <!--
+        <meta content="keyword1,keyword2,keyword3" name="keywords" />
+        <meta content="Description of your page" name="description" />
+    -->
+</head>
+<body>
+<div id="template">
+    <div id="topbar">
+        <div id="title">Shopping lists</div>
+        <div id="rightbutton" class="edit">
+            <a href="#edit-lists">Edit</a>
+        </div>
+        <div id="bluerightbutton" class="done">
+            <a href="#done-edit-lists">Done</a>
+        </div>
+    </div>
+    <div id="content">
+        <ul class="pageitem">
+            <li class="menu add"><a href="#"><span class="name">✚ Add list</span></a></li>
+        </ul>
+    </div>
+    <div id="footer">
+        <!-- Support iWebKit by sending us traffic; please keep this footer on your page, consider it a thank you for our work :-) -->
+        <a class="noeffect" href="http://iwebkit.net">Powered by iWebKit</a>
+    </div>
+</div>
+</body>
+</html>
