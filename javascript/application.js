@@ -54,6 +54,8 @@ $.extend($, {
         $menuItem.find('a').attr('href', config.href);
         $menuItem.find('.name').text(config.name);
         if (config.arrow) $menuItem.find('.name').after('<span class="arrow"></span>');
+        $menuItem.prepend('<span class="deleteicon"></span>');
+        $menuItem.append('<span class="dragindicator"></span>');
         if (config.comment) $menuItem.find('.name').after('<span class="comment">'+comment+'</span>');
         
         return $menuItem;
@@ -73,7 +75,7 @@ $.extend($, {
             .bind('blur', function () {
                 if ($item.data('list') == null) {
                     // Create item
-                    if ($(this).val().match(/\A\s*\Z/) == null) {
+                    if (!$(this).val().match(/\A\s*\Z/)) {
                         $item.data('list', {
                             listData: { name: $(this).val().replace(/\A\s+|\s+\Z/g, ''), href: '#list/'+identize($(this).val()) },
                             items: []
@@ -155,7 +157,8 @@ $(function () {
             }
         })
         .find('#rightbutton a')
-            .click(function (e) {
+            .click(function (e) { 
+                $lists.addClass('editing');
                 $lists.find('li:not(.add) a')
                     .live('click', function (e) { 
                         $.editList($(this).parent('li'));
@@ -173,6 +176,7 @@ $(function () {
             .end()
         .find('#bluerightbutton a')
             .click(function (e) {
+                $lists.removeClass('editing');
                 $lists.find('li:not(.add) a').die('click');
                 $lists.find('#rightbutton').show();
                 $lists.find('#bluerightbutton').hide();
@@ -191,6 +195,11 @@ $(function () {
                 e.stopPropagation();
                 e.preventDefault();
                 return false;
+            })
+            .end()
+        .find('.deleteicon')
+            .live('click touchstart', function () {
+                $(this).parent('li').toggleClass('deleting');
             })
             .end()
     ;

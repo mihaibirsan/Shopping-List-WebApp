@@ -2,3 +2,45 @@
 #bluerightbutton.done a {
     padding: 0 10px;
 }
+
+.dragindicator,
+.editing .arrow {
+    opacity: 0;
+    -webkit-transition: opacity .3s;
+}
+.arrow,
+.editing .dragindicator {
+    opacity: 1;
+    -webkit-transition: opacity .3s;
+}
+
+.deleteicon {
+    position: absolute;
+    padding: 6px;
+    width: 31px;
+    height: 31px;
+    background: url(../images/delete.png) no-repeat 6px 6px;
+    
+    opacity: 0;
+    left: -41px;
+    -webkit-transition: all .3s;
+}
+.editing .deleteicon {
+    opacity: 1;
+    left: 0;
+    -webkit-transition: all .3s;
+}
+.deleting .deleteicon {
+    -webkit-transform: rotate(-90deg);
+    -webkit-transition: all .3s;
+}
+
+.menu a {
+    -webkit-transition: padding .3s;
+}
+.editing .menu a {
+    padding-left: 36px;
+}
+.editing .menu.add a {
+    padding-left: 0!important;
+}
