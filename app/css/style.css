@@ -317,7 +317,7 @@ a:hover .arrow {
 	-webkit-border-bottom-right-radius: 5px;
 	margin-right: -4px;
 }
-#tributton a:hover, #tributton a#pressed, #duobutton a:hover, #duobutton a#pressed {
+#tributton:hover a, #tributton a#pressed, #duobutton:hover a, #duobutton a#pressed {
 	background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#7b8b9f), color-stop(3%, #8c9baf), to(#647792));
 	color: white;
 	text-shadow: black 0 -1px 0;

@@ -56,6 +56,7 @@ $.extend($, {
         if (config.arrow) $menuItem.find('.name').after('<span class="arrow"></span>');
         $menuItem.prepend('<span class="deleteicon"></span>');
         $menuItem.append('<span class="dragindicator"></span>');
+        $menuItem.append('<span class="deletebuttoncontainer"><span class="deletebutton">Delete</span></span>');
         if (config.comment) $menuItem.find('.name').after('<span class="comment">'+comment+'</span>');
         
         return $menuItem;
@@ -102,6 +103,16 @@ $.extend($, {
             .get(0).focus()
         ;
     },
+	deleteList: function ($item) {
+		var list = $item.data('list');
+		lists.splice(lists.indexOf(list), 1);
+		persistLists();
+		
+		$item.addClass('deleted');
+		$item.bind('webkitTransitionEnd', function (e) {
+			$item.remove();
+		});
+	},
     editListItem: function ($item, options) {
         var config = {
             placeholder: ''
@@ -146,10 +157,30 @@ $.extend($, {
 
 $(function () {
     var $body = $('body');
-    var $template = $('#template').remove().removeAttr('id').addClass('screen');
+    var $template = 
+		$('<div />')
+			.addClass('screen')
+			.haml(
+				['#topbar',
+					['#title', 'Shopping lists'],
+					['#rightbutton.edit', 
+						['%a', { href: '#edit-lists' }, 'Edit']],
+					['#bluerightbutton.done',
+						['%a', { href: '#done-edit-lists' }, 'Done']]],
+				['#content',
+					['%ul.pageitem',
+						['%li.menu.add',
+							['%a', { href: '#' },
+								['%span.name', '✚ Add list']]]]],
+				['#footer',
+					['%a.noeffect', { href: "http://iwebkit.net" }, 'Powered by iWebKit']]
+			)
+		;
+	$('#loading-screen').remove();
     
   /* Template: Lists */
-    var $lists = $template.clone(true);
+ 	$('body').append($template.clone(true).attr('id', 'lists-screen'));
+    var $lists = $('#lists-screen').detach();
     $lists.find('#bluerightbutton').hide();
     $lists
         .data('api', {
@@ -177,6 +208,7 @@ $(function () {
         .find('#bluerightbutton a')
             .click(function (e) {
                 $lists.removeClass('editing');
+				$lists.find('li').removeClass('deleting');
                 $lists.find('li:not(.add) a').die('click');
                 $lists.find('#rightbutton').show();
                 $lists.find('#bluerightbutton').hide();
@@ -199,7 +231,18 @@ $(function () {
             .end()
         .find('.deleteicon')
             .live('click touchstart', function () {
-                $(this).parent('li').toggleClass('deleting');
+				var $li = $(this).parent('li');
+				if ($li.hasClass('deleting')) {
+					$(this).parent('li').removeClass('deleting');
+				} else {
+					$(this).parents('ul').eq(0).find('li').removeClass('deleting');
+					$(this).parent('li').addClass('deleting');
+				}
+            })
+            .end()
+        .find('.deletebutton')
+            .live('click touchstart', function () {
+				$.deleteList($(this).parents('li').eq(0));
             })
             .end()
     ;
@@ -214,7 +257,7 @@ $(function () {
         });
     } else {
     }
-    
+	
   /* Template: List */
     var $list = $template.clone(true);
     $list.find('#rightbutton').hide();

@@ -34,13 +34,63 @@
     -webkit-transform: rotate(-90deg);
     -webkit-transition: all .3s;
 }
+.deleting .dragindicator {
+	opacity: 0;
+    -webkit-transition: all .3s;
+}
 
 .menu a {
-    -webkit-transition: padding .3s;
+    -webkit-transition: all .3s;
 }
 .editing .menu a {
     padding-left: 36px;
 }
 .editing .menu.add a {
     padding-left: 0!important;
+}
+
+
+li {
+    -webkit-transition: height .3s;
+}
+li.deleted {
+	height: 0;
+    -webkit-transition: height .3s;
+}
+.editing .menu.add {
+	height: 0;
+	border-top-width: 0;
+    -webkit-transition: height .3s;
+}
+.editing .menu.add a {
+	height: 0;
+}
+
+/* Delete button */
+
+.deletebuttoncontainer {
+	position: absolute;
+	right: 10px; top: 7px;
+	width: 0;
+	overflow: hidden;
+    -webkit-transition: width .3s;
+	cursor: pointer;
+}
+.deleting .deletebuttoncontainer {
+	width: 52px;
+    -webkit-transition: width .3s;
+}
+.deletebutton {
+	-webkit-border-image: url('../images/redbutton.png') 3 5 3 5;
+	border-width: 3px 5px 3px 5px;
+	display: inline-block;
+	text-align: center;
+	color: white;
+	text-decoration: none;
+	margin-top: 1px;
+	text-shadow: black 0 -1px 0;
+	font-size: 13px;
+	font-weight: bold;
+	line-height: 21px;
+	height: 21px;
 }
