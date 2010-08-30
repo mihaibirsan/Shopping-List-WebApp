@@ -5,6 +5,8 @@ Storage.prototype.getObject = function(key) {
     return eval(this.getItem(key));
 }
 
+var versionString = '0.6.3';
+
 /*
     [
         {
@@ -36,7 +38,9 @@ persistLists();
 /* END */
 
 function identize(s) {
-    return $(s.toLowerCase().match(/\w+/g)).map(function () { return this.replace(/^\w/, function (s) { return s.toUpperCase(); }) }).get().join('');
+    return $(s.toLowerCase().match(/\w+/g)).map(function () { 
+		return this.replace(/^\w/, function (s) { return s.toUpperCase(); }) 
+	}).get().join('');
 }
 
 $.extend($, {
@@ -57,8 +61,7 @@ $.extend($, {
         $menuItem.prepend('<span class="deleteicon"></span>');
         $menuItem.append('<span class="dragindicator"></span>');
         $menuItem.append('<span class="deletebuttoncontainer"><span class="deletebutton">Delete</span></span>');
-        if (config.comment) $menuItem.find('.name').after('<span class="comment">'+comment+'</span>');
-        
+        if (config.comment) $menuItem.find('.name').after('<span class="comment">'+config.comment+'</span>');
         return $menuItem;
     },
     editList: function ($item, options) {
@@ -76,9 +79,9 @@ $.extend($, {
             .bind('blur', function () {
                 if ($item.data('list') == null) {
                     // Create item
-                    if (!$(this).val().match(/\A\s*\Z/)) {
+                    if (!$(this).val().match(/^\s*$/)) {
                         $item.data('list', {
-                            listData: { name: $(this).val().replace(/\A\s+|\s+\Z/g, ''), href: '#list/'+identize($(this).val()) },
+                            listData: { name: $(this).val().replace(/^\s+|\s+$/g, ''), href: '#list/'+identize($(this).val()) },
                             items: []
                         });
                         lists.push($item.data('list'));
@@ -92,8 +95,8 @@ $.extend($, {
                     }
                 } else {
                     // Update item
-                    if (!$(this).val().match(/\A\s*\Z/)) {
-                        $item.data('list').listData.name = $(this).val().replace(/\A\s+|\s+\Z/g, '');
+                    if (!$(this).val().match(/^\s*$/)) {
+                        $item.data('list').listData.name = $(this).val().replace(/^\s+|\s+$/g, '');
                         persistLists();
                     }
                 }
@@ -126,11 +129,11 @@ $.extend($, {
 
         $editItem.find('input')
             .bind('blur', function () {
-                if ($item.data('list') == null) {
+                if ($item.data('item') == null) {
                     // Create item
-                    if ($(this).val().match(/\A\s*\Z/) == null) {
+                    if ($(this).val().match(/^\s*$/) == null) {
                         $item.data('item', {
-                            name: $(this).val().replace(/\A\s+|\s+\Z/g, ''), 
+                            name: $(this).val().replace(/^\s+|\s+$/g, ''), 
                             spent: null
                         });
                         items.push($item.data('item'));
@@ -142,8 +145,8 @@ $.extend($, {
                     }
                 } else {
                     // Update item
-                    if (!$(this).val().match(/\A\s*\Z/)) {
-                        $item.data('item').name = $(this).val().replace(/\A\s+|\s+\Z/g, '');
+                    if (!$(this).val().match(/^\s*$/)) {
+                        $item.data('item').name = $(this).val().replace(/^\s+|\s+$/g, '');
                         persistLists();
                     }
                 }
@@ -152,7 +155,52 @@ $.extend($, {
             })
             .get(0).focus()
         ;
-    }
+    },
+    editListItemSpending: function ($item, options, callback) {
+        var config = {
+            placeholder: 'Spent money'
+        };
+		if (typeof options == 'function') {
+			callback = options;
+			options = null;
+		}
+        if (options) $.extend(config, options);
+        
+        var spending = $item.find('.comment').text();
+        
+        var $editItem = $('<li class="smallfield"><input placeholder="'+config.placeholder+'" type="number" value="'+spending+'" /></li>');
+		$editItem.prepend($item.find('.name').clone(true));
+        $item.after($editItem).detach();
+
+        $editItem.find('input')
+            .bind('blur', function () {
+                if ($(this).val().replace(/^\s+|\s+$/g, '') == '') {
+					$item.data('item').spent = null;
+					persistLists();
+					$item.find('.comment').remove();
+				} else if (!isNaN(Number($(this).val().replace(/^\s+|\s+$/g, '')))) {
+					$item.data('item').spent = Number($(this).val().replace(/^\s+|\s+$/g, ''));
+					persistLists();
+					if ($item.find('.comment').size() > 0) $item.find('.comment').text($item.data('item').spent);
+					else $item.find('.name').after('<span class="comment">'+$item.data('item').spent+'</span>');
+				}
+                
+				if (callback != undefined) callback();
+                $editItem.after($item).remove();
+            })
+            .get(0).focus()
+        ;
+    },
+	deleteListItem: function ($item) {
+		var item = $item.data('item');
+		items.splice(items.indexOf(item), 1);
+		persistLists();
+		
+		$item.addClass('deleted');
+		$item.bind('webkitTransitionEnd', function (e) {
+			$item.remove();
+		});
+	}
 });
 
 $(function () {
@@ -172,8 +220,7 @@ $(function () {
 						['%li.menu.add',
 							['%a', { href: '#' },
 								['%span.name', '✚ Add list']]]]],
-				['#footer',
-					['%a.noeffect', { href: "http://iwebkit.net" }, 'Powered by iWebKit']]
+				['#footer', 'Version ' + versionString + ' • Powered by iWebKit']
 			)
 		;
 	$('#loading-screen').remove();
@@ -241,8 +288,11 @@ $(function () {
             })
             .end()
         .find('.deletebutton')
-            .live('click touchstart', function () {
+            .live('click touchstart', function (e) {
 				$.deleteList($(this).parents('li').eq(0));
+                e.stopPropagation();
+                e.preventDefault();
+                return false;
             })
             .end()
     ;
@@ -259,8 +309,22 @@ $(function () {
     }
 	
   /* Template: List */
-    var $list = $template.clone(true);
-    $list.find('#rightbutton').hide();
+ 	var itemClickHandler = function (e) { 
+        $.editListItem($(this).parent('li'));
+        e.stopPropagation();
+        e.preventDefault();
+        return false;
+    };
+	var updateSum = function (e) {
+		var sum = 0;
+		for (var i in items) {
+			if (items[i].spent != null)
+				sum += items[i].spent;
+		}
+		$list.find('#sum').text(sum);
+	};
+ 	$('body').append($template.clone(true).attr('id', 'list-screen'));
+    var $list = $('#list-screen').detach();
     $list.find('#bluerightbutton').hide();
     $list
         .find('#title')
@@ -277,6 +341,32 @@ $(function () {
                 })
             }
         })
+        .find('#rightbutton a')
+            .click(function (e) { 
+                $list.addClass('editing');
+                $list.find('li:not(.add) a')
+                    .live('click', itemClickHandler)
+                ;
+                $list.find('#rightbutton').hide();
+                $list.find('#bluerightbutton').show();
+                e.stopPropagation();
+                e.preventDefault();
+                return false;
+            })
+            .end()
+        .find('#bluerightbutton a')
+            .click(function (e) {
+                $list.removeClass('editing');
+				$list.find('li').removeClass('deleting');
+                $list.find('li:not(.add) a').die('click', itemClickHandler);
+                $list.find('#rightbutton').show();
+                $list.find('#bluerightbutton').hide();
+				updateSum();
+                e.stopPropagation();
+                e.preventDefault();
+                return false;
+            })
+            .end()
         .find('li.add a')
             .click(function (e) {
                 var $newItem = $.createMenuItem({ name: '', href: '#' })
@@ -288,31 +378,69 @@ $(function () {
                 e.preventDefault();
                 return false;
             })
+			.end()
+        .find('.deleteicon')
+            .live('click touchstart', function () {
+				var $li = $(this).parent('li');
+				if ($li.hasClass('deleting')) {
+					$(this).parent('li').removeClass('deleting');
+				} else {
+					$(this).parents('ul').eq(0).find('li').removeClass('deleting');
+					$(this).parent('li').addClass('deleting');
+				}
+            })
+            .end()
+        .find('.deletebutton')
+            .live('click touchstart', function (e) {
+				$.deleteListItem($(this).parents('li').eq(0));
+                e.stopPropagation();
+                e.preventDefault();
+                return false;
+            })
+            .end()
+        .find('li.item a')
+            .live('click', function (e) {
+				var $li = $(this).parent('li');
+				if ($list.is('.editing')) return;
+				$.editListItemSpending($li, function () { updateSum(); });
+                e.stopPropagation();
+                e.preventDefault();
+                return false;
+            })
+			.end()
         .find('li.add .name')
             .each(function () {
                 $(this).text($(this).text().replace('list', 'item'));
             })
+			.end()
+		.find('#content')
+			.after('<div id="sum" />')
+			.end()
+		.find('#footer')
+			.remove()
+			.end()
     ;
     function restoreList(list) {
         $list.find('#title').text(list.listData.name);
         $list.find('li:not(.add)').remove();
-        if (list.items.length > 0) {
-            items = list.items;
+        items = list.items;
+        if (items.length > 0) {
             $(list.items).each(function () {
                 $list.find('#content .pageitem .add').before(
-                    $.createMenuItem(this)
+                    $.createMenuItem($.extend({ comment: this.spent }, this))
                         .addClass('item')
                         .data('item', this)
                 );
             });
         } else {
         }
+		updateSum();
     }
     
   /* Navigation */
     $body.append($lists);
     SWFAddress.onChange = function () {
-        $body.find('.screen').detach();
+        $body.find('.screen').removeClass('editing').detach();
         
         var path = SWFAddress.getPathNames();
         switch (path[0]) {

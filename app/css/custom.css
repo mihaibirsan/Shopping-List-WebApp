@@ -66,6 +66,42 @@ li.deleted {
 	height: 0;
 }
 
+#list-screen .comment {
+	background: #8C99B4;
+	color: #fff;
+	font-weight: bold;
+	font-size: 15px;
+	padding: 1px 8px 0;
+	margin-right: 11px;
+	line-height: 20px;
+	opacity: 1;
+	-webkit-border-radius: 10px;
+    -webkit-transition: all .3s;
+}
+#list-screen.editing .comment {
+	opacity: 0;
+    -webkit-transition: all .3s;
+}
+
+#sum {
+	background: #000;
+	color: #fff;
+	font-weight: bold;
+	font-size: 32px;
+	padding: 10px;
+	min-width: 21px;
+	text-align: right;
+	-webkit-border-top-left-radius: 20px;
+	-webkit-border-top-right-radius: 20px;
+	position: absolute;
+	right: 32px; bottom: 0;
+    -webkit-transition: all .3s;
+}
+.editing #sum {
+	right: -100px;
+    -webkit-transition: all .3s;
+}
+
 /* Delete button */
 
 .deletebuttoncontainer {

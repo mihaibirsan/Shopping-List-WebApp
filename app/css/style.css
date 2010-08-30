@@ -1,9 +1,12 @@
 /*iWebKit css 5.04 by Christopher Plieger*/
+html {
+	height: 100%;
+}
 body {
+	min-height: 100%;
 	position: relative;
 	margin: 0;
 	-webkit-text-size-adjust: none;
-	min-height: 416px;
 	font-family: helvetica,sans-serif;
 	-webkit-background-size:0.438em 100%; 
 	background: -webkit-gradient(linear,left top,right top,from(#c5ccd4), color-stop(71%, #c5ccd4), color-stop(72%, #cbd2d8), to(#cbd2d8));
@@ -13,6 +16,9 @@ body {
 	margin: auto;
 	display: block;
 	text-align: center!important;
+}
+a:hover {
+	color: inherit;
 }
 img {
 	border: 0;
@@ -230,7 +236,7 @@ a:hover .arrow {
 #content {
 	width: 100%;
 	position: relative;
-	min-height: 250px;
+	/* min-height: 250px; */
 	margin-top: 10px;
 	height: auto;
 	z-index: 0;
@@ -317,11 +323,13 @@ a:hover .arrow {
 	-webkit-border-bottom-right-radius: 5px;
 	margin-right: -4px;
 }
+/*
 #tributton:hover a, #tributton a#pressed, #duobutton:hover a, #duobutton a#pressed {
 	background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#7b8b9f), color-stop(3%, #8c9baf), to(#647792));
 	color: white;
 	text-shadow: black 0 -1px 0;
 }
+*/
 #triselectionbuttons, #duoselectionbuttons {
 	-webkit-border-image: url('../images/navbutton.png') 0 5 0 5;
 	border-width: 0 5px 0 5px;
@@ -457,9 +465,12 @@ fieldset {
 	-webkit-border-bottom-left-radius: 8px;
 	-webkit-border-bottom-right-radius: 8px;
 }
+/*
 .menu:hover, .store:hover, .list #content li a:hover, .list .withimage:hover, .applist li:hover:nth-child(n),.ipodlist li:hover:nth-child(n) {
 	background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#058cf5), to(#015fe6));
 }
+*/
+/*
 .ipodlist li:hover:nth-child(n) .name,.ipodlist li:hover:nth-child(n) .time{border:0}
 .menu a:hover .name, .store:hover .starcomment, .store:hover .name, .store:hover .comment, .list .withimage a:hover .comment {
 	color: #fff;
@@ -467,6 +478,7 @@ fieldset {
 .menu a:hover .comment {
 	color: #CCF;
 }
+*/
 .menu a {
 	display: block;
 	height: 43px;
