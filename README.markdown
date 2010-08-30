@@ -2,7 +2,7 @@ iPhone Shopping List
 ====================
 
 A shopping list web app for iPhone that is designed to be used offline as well.
-To test the application, visit http://dev.gysserae.ro/shopping/app/ from your 
+To test the application, visit [http://dev.gysserae.ro/shopping/app/] from your 
 iPhone, iPod, iPad or any WebKit browser (Safari, Chrome, etc). 
 
 
@@ -12,7 +12,7 @@ Features
 * Multiple lists
 * Calculating total for items in the cart (useful while shopping)
 * All data saved locally (using HTML5 storage)
-* iPhone user interface look-alike (powered by [iWekKit](http://iwebkit.net/))
+* iPhone user interface look-alike (powered by [iWebKit](http://iwebkit.net/))
 
 
 Futher development
