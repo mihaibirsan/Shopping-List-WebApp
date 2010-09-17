@@ -5,7 +5,7 @@ Storage.prototype.getObject = function(key) {
     return eval(this.getItem(key));
 }
 
-var versionString = '0.6.3';
+var versionString = '0.6.4';
 
 /*
     [
@@ -41,6 +41,15 @@ function identize(s) {
     return $(s.toLowerCase().match(/\w+/g)).map(function () { 
 		return this.replace(/^\w/, function (s) { return s.toUpperCase(); }) 
 	}).get().join('');
+}
+function evalSpent(spent, format) {
+    if (spent == null || spent.match && spent.match(/^\s*$/)) return null;
+    var spentValue = 'NaN';
+    try {
+        spentValue = eval('('+spent+')');
+        if (format) spentValue = (''+(spentValue*100)).replace(/(\d\d)(\..*|$)/, '.$1');
+    } catch (e) {}
+    return spentValue;
 }
 
 $.extend($, {
@@ -166,7 +175,8 @@ $.extend($, {
 		}
         if (options) $.extend(config, options);
         
-        var spending = $item.find('.comment').text();
+        var spending = $item.data('item').spent;
+        if (spending == null) spending = '';
         
         var $editItem = $('<li class="smallfield"><input placeholder="'+config.placeholder+'" type="number" value="'+spending+'" /></li>');
 		$editItem.prepend($item.find('.name').clone(true));
@@ -174,15 +184,18 @@ $.extend($, {
 
         $editItem.find('input')
             .bind('blur', function () {
-                if ($(this).val().replace(/^\s+|\s+$/g, '') == '') {
+                var val = $(this).val().replace(/^\s+|\s+$/g, '');
+                if (val == '') {
 					$item.data('item').spent = null;
 					persistLists();
 					$item.find('.comment').remove();
-				} else if (!isNaN(Number($(this).val().replace(/^\s+|\s+$/g, '')))) {
-					$item.data('item').spent = Number($(this).val().replace(/^\s+|\s+$/g, ''));
+					$item.removeClass('bought');
+				} else if (!isNaN(evalSpent(val))) {
+					$item.data('item').spent = $(this).val().replace(/^\s+|\s+$/g, '');
 					persistLists();
-					if ($item.find('.comment').size() > 0) $item.find('.comment').text($item.data('item').spent);
-					else $item.find('.name').after('<span class="comment">'+$item.data('item').spent+'</span>');
+					if ($item.find('.comment').size() == 0) $item.find('.name').after('<span class="comment"></span>');
+                    $item.find('.comment').text(evalSpent($item.data('item').spent, true));
+                    $item.addClass('bought');
 				}
                 
 				if (callback != undefined) callback();
@@ -319,9 +332,9 @@ $(function () {
 		var sum = 0;
 		for (var i in items) {
 			if (items[i].spent != null)
-				sum += items[i].spent;
+				sum += evalSpent(items[i].spent);
 		}
-		$list.find('#sum').text(sum);
+		$list.find('#sum').text(evalSpent(sum, true));
 	};
  	$('body').append($template.clone(true).attr('id', 'list-screen'));
     var $list = $('#list-screen').detach();
@@ -427,8 +440,9 @@ $(function () {
         if (items.length > 0) {
             $(list.items).each(function () {
                 $list.find('#content .pageitem .add').before(
-                    $.createMenuItem($.extend({ comment: this.spent }, this))
+                    $.createMenuItem($.extend({ comment: evalSpent(this.spent, true) }, this))
                         .addClass('item')
+                        .addClass(this.spent != null ? 'bought' : null)
                         .data('item', this)
                 );
             });
