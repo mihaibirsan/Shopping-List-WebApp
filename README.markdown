@@ -1,9 +1,7 @@
-iPhone Shopping List
+Shopping List WebApp
 ====================
 
-A shopping list web app for iPhone that is designed to be used offline as well.
-To test the application, visit [http://dev.gysserae.ro/shopping/app/] from your 
-iPhone, iPod, iPad or any WebKit browser (Safari, Chrome, etc). 
+A shopping list mobile web app intended for the iOS and Android that is designed to be used offline as well. To test the application, visit [http://dev.gysserae.ro/shopping/app/] from your iPhone, iPod, iPad or any WebKit browser (Safari, Chrome, etc). 
 
 
 Features
